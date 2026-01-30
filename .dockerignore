@@ -1,1 +1,18 @@
+# Exclude git history
+.git
+.gitignore
 
+# Exclude python cache
+__pycache__
+*.pyc
+
+# CRITICAL: Exclude heavy data
+data/
+notebooks/
+
+# Exclude training scripts (inference doesn't need them)
+training/
+
+# Exclude local virtual environments
+venv/
+.env
