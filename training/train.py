@@ -20,7 +20,7 @@ MODEL_SAVE_PATH = os.path.join(MODEL_SAVE_DIR, "career_net.pth")
 BATCH_SIZE = 64
 LEARNING_RATE = 0.001
 EPOCHS = 10
-INPUT_DIM = 28  # 6 RIASEC + 22 Work Styles
+INPUT_DIM = 27  # 6 RIASEC + 22 Work Styles
 
 # 1. Helper to determine output size dynamically
 def get_num_classes(mapping_path):
