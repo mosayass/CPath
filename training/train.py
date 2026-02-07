@@ -1,12 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, random_split
 import json
 import os
-import sys
-
-# Import the dataset class (assumes dataset.py is in the same folder)
 from dataset import CareerDataset
 
 # --- CONFIGURATION ---
@@ -72,7 +69,25 @@ class CareerClassifier(nn.Module):
         # Output
         out = self.output_layer(out)
         return out
-# --- 3. TRAINING LOOP ---
+
+def check_accuracy(loader, model, device):
+    num_correct = 0
+    num_samples = 0
+    model.eval()  # Set model to evaluation mode
+    
+    with torch.no_grad():
+        for features, labels in loader:
+            features = features.to(device)
+            labels = labels.to(device)
+            
+            scores = model(features)
+            _, predictions = scores.max(1)
+            num_correct += (predictions == labels).sum().item()
+            num_samples += predictions.size(0)
+    
+    model.train()  # Return to training mode
+    return float(num_correct) / float(num_samples) * 100 
+# --- TRAINING LOOP ---
 def train():
     print("--- Starting Phase 2: Training ---")
     
@@ -86,8 +101,20 @@ def train():
         raise FileNotFoundError(f"Data file not found at {CSV_PATH}. Make sure you are running this from the 'training/' folder.")
 
     dataset = CareerDataset(CSV_PATH)
-    dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True)
-    print(f"Data Loaded: {len(dataset)} samples.")
+    
+    train_size = int(0.8 * len(dataset))
+    test_size = len(dataset) - train_size
+
+    train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
+
+    # --- NEW: Create Two Loaders ---
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False) # Don't shuffle test data
+    
+    print(f"Data Loaded: {len(dataset)} total.")
+    print(f"Training on {len(dataset)} samples | Testing on {len(test_dataset)} samples.")
+
+    
 
     # 2. Initialize Model
     num_classes = get_num_classes(MAP_PATH)
@@ -103,7 +130,7 @@ def train():
     model.train()
     for epoch in range(EPOCHS):
         total_loss = 0
-        for i, (features, labels) in enumerate(dataloader):
+        for i, (features, labels) in enumerate(train_loader):
             features = features.to(device)
             labels = labels.to(device)
 
@@ -118,9 +145,13 @@ def train():
 
             total_loss += loss.item()
 
-        avg_loss = total_loss / len(dataloader)
+        avg_loss = total_loss / len(train_loader)
         print(f"Epoch [{epoch+1}/{EPOCHS}], Loss: {avg_loss:.4f}")
 
+    # ---  CHECK REAL ACCURACY ---
+    print("--- Evaluating on Test Set (Unseen Data) ---")
+    acc = check_accuracy(test_loader, model, device)
+    print(f"FINAL ACCURACY: {acc:.2f}%")
     # --- 4. SAVE MODEL ---
     print("--- Saving Model ---")
     os.makedirs(MODEL_SAVE_DIR, exist_ok=True)
