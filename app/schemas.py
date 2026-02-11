@@ -24,7 +24,6 @@ class CareerRequest(BaseModel):
 class CareerPrediction(BaseModel):
     rank: int
     job_label: int
-    job_title: str
     confidence: float
 
 class PredictionResponse(BaseModel):
