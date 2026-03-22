@@ -5,10 +5,14 @@
 # Exclude python cache
 __pycache__
 *.pyc
+.ipynb_checkpoints
+.DS_Store
 
 # CRITICAL: Exclude heavy data
 data/
+training/
 notebooks/
+SAFE_training_data_50k.csv
 
 # Exclude training scripts (inference doesn't need them)
 training/

@@ -7,17 +7,19 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Set the working directory inside the container
-WORKDIR /app
+WORKDIR /code
 
 # Copy the requirements file first (better caching)
 COPY requirements.txt .
 
 # Install dependencies
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code
-# Note: Because of .dockerignore, data/ and training/ are NOT copied here
-COPY . .
+# Copy the application code into the container
+COPY ./app ./app
+
+COPY ./models ./models
 
 # Expose the port FastAPI runs on
 EXPOSE 8000
