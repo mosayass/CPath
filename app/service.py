@@ -13,7 +13,7 @@ class CareerModelService:
         # ... (This part remains exactly the same as before) ...
         print(f"Loading resources from: {model_path}")
 
-        self.model = CareerClassifier(input_dim=28, num_classes=891)
+        self.model = CareerClassifier(input_dim=27, num_classes=891)
         
         if not os.path.exists(model_path):
             raise FileNotFoundError(f"Model weights not found: {model_path}")

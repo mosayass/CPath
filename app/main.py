@@ -7,7 +7,7 @@ from app.service import career_service
 
 # --- Configuration ---
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MODEL_PATH = os.path.join(BASE_DIR, "models", "career_net.pth")
+MODEL_PATH = os.path.join(BASE_DIR, "models", "career_net (88%).pth")
 MAPPING_PATH = os.path.join(BASE_DIR, "SAFE_job_mapping.json")
 
 # --- Lifespan Manager ---

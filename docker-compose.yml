@@ -10,6 +10,7 @@ services:
       # Syncs your local 'app' folder to the container
       # This allows you to edit code in VS Code and see changes instantly without rebuilding
       - ./models:/code/models
+      - ./app:/code/app
     environment:
       - APP_ENV=development
     # restart: always  <-- Uncomment this for production
