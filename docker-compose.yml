@@ -13,6 +13,8 @@ services:
       - ./app:/code/app
     environment:
       - APP_ENV=development
+    networks: 
+      - ai_shared_network
     # restart: always  <-- Uncomment this for production
 # This tells Docker to look for the network your C# app already created
 networks:
